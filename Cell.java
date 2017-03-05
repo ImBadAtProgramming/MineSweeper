@@ -23,36 +23,64 @@ class Cell extends JComponent implements MouseListener {
 	private boolean hasFlag;
 	private boolean covered;
 	private int numMines;
-	private Image cover;
-	private Image flag;
-	public Cell(boolean hasMine) throws IOException {
+	private CellPic cellPic;
+	private GameEvent gameEvent;
+	
+	public Cell(CellPic cellPic, GameEvent gameEvent) throws IOException {
 
 		super();
 		this.setPreferredSize(new Dimension(width, height));
-		this.hasMine = hasMine;
+		this.hasMine = false;
+		this.cellPic = cellPic;		
+		this.gameEvent = gameEvent;
 		hasFlag = false;
-		covered = true;
+		covered = false;
 		numMines = 0;
 		addMouseListener(this);
-		
-		cover = ImageIO.read(new File("Images/cover.png"));
-		flag = ImageIO.read(new File("Images/flag.png"));
 	}
 	
 	public Image getImage() {
 		
 		Image img = null;
 		
-		if (covered == true) {
-			img = cover;
+		if (covered) {
+			img = cellPic.getImage(CellPic.ImgType.COVER);
 			
 			if (hasFlag == true) {
-				img = flag;
+				img = cellPic.getImage(CellPic.ImgType.FLAG);
+			}
+		} else {
+			
+			if (hasMine == true) {
+				img = cellPic.getImage(CellPic.ImgType.MINE);
+				return img;
+			}
+			if (numMines == 0) {
+				img = cellPic.getImage(CellPic.ImgType.EMPTY);
+			}
+			if (numMines == 1) {
+				img = cellPic.getImage(CellPic.ImgType.ONE);
+			}
+			if (numMines == 2) {
+				img = cellPic.getImage(CellPic.ImgType.TWO);
+			}
+			if (numMines == 3) {
+				img = cellPic.getImage(CellPic.ImgType.THREE);
+			}
+			if (numMines == 4) {
+				img = cellPic.getImage(CellPic.ImgType.FOUR);
+			}
+			if (numMines == 5) {
+				img = cellPic.getImage(CellPic.ImgType.FIVE);
 			}
 		}
-		
 		return img;
 	}
+	
+	public void setMine() {
+		hasMine = true;
+	}
+	
 	public void paintComponent(Graphics g)
     {
 		
@@ -68,7 +96,17 @@ class Cell extends JComponent implements MouseListener {
 		if (button == MouseEvent.BUTTON3) {
 			hasFlag = !hasFlag;
 		}
-		
+		 if (button == MouseEvent.BUTTON1) {
+			 covered = !covered;
+		 }
+		 if (button == MouseEvent.BUTTON2) {
+			 numMines = numMines + 1;
+		 }
+		 
+		 if (hasMine) {
+			 gameEvent.hitMine();
+		 }
+		 
 		repaint();
 	}
 
