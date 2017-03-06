@@ -1,40 +1,42 @@
 package Minesweeper;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
 class Cell extends JComponent implements MouseListener {
-	
+
 	private static final long serialVersionUID = 1L;
 	
 	static final int height = 20;
 	static final int width = 20;
 
+	private boolean allowClick;
 	private boolean hasMine;
 	private boolean hasFlag;
 	private boolean covered;
+	private int x = 0;
+	private int y = 0;
 	private int numMines;
 	private CellPic cellPic;
 	private GameEvent gameEvent;
 	
-	public Cell(CellPic cellPic, GameEvent gameEvent) throws IOException {
+	public Cell(int x, int y, CellPic cellPic, GameEvent gameEvent) throws IOException {
 
 		super();
+		this.x = x;
+		this.y = y;
 		this.setPreferredSize(new Dimension(width, height));
+		allowClick = true;
 		this.hasMine = false;
 		this.cellPic = cellPic;		
 		this.gameEvent = gameEvent;
 		hasFlag = false;
-		covered = false;
+		covered = true;
 		numMines = 0;
 		addMouseListener(this);
 	}
@@ -92,21 +94,48 @@ class Cell extends JComponent implements MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		int button = e.getButton();
-		
+		if (allowClick == true) {
+			
 		if (button == MouseEvent.BUTTON3) {
 			hasFlag = !hasFlag;
+			gameEvent.toggleMineFlag(hasFlag);
 		}
-		 if (button == MouseEvent.BUTTON1) {
-			 covered = !covered;
-		 }
-		 if (button == MouseEvent.BUTTON2) {
-			 numMines = numMines + 1;
-		 }
+		if (button == MouseEvent.BUTTON1) {
+			
+			if (hasFlag) {
+				//do nothing
+			}
+			else if (hasMine) {
+				gameEvent.hitMine();
+				covered = false;
+				for (int x = 0; x < Board.width; x++) {
+					for (int y = 0; y < Board.height; y++) {
+						Board.cells[x][y].allowClick();
+						if (Board.cells[x][y].checkIfMine()) {
+							Board.cells[x][y].uncover();
+						}
+					}
+				}
+				
+			} 
+			else if (covered) {
+				covered = !covered;
+				numMines = gameEvent.uncoverCell(this);
+			}
+		}
 		 
-		 if (hasMine) {
-			 gameEvent.hitMine();
-		 }
-		 
+		repaint();
+	}
+}
+
+	private void allowClick() {
+		// TODO Auto-generated method stub
+		allowClick = false;
+	}
+
+	private void uncover() {
+		// TODO Auto-generated method stub
+		covered = false;
 		repaint();
 	}
 
@@ -132,5 +161,20 @@ class Cell extends JComponent implements MouseListener {
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public boolean checkIfMine() {
+		// TODO Auto-generated method stub
+		return hasMine;
+	}
+
+	public int inputX() {
+		// TODO Auto-generated method stub
+		return x;
+	}
+
+	public int inputY() {
+		// TODO Auto-generated method stub
+		return y;
 	}
 }

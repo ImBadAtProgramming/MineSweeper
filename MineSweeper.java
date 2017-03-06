@@ -8,6 +8,5 @@ public class MineSweeper {
 		
 		Board board = new Board();
 		board.createFrame();
-		
 	}
 }
