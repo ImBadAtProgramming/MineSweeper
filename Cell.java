@@ -8,7 +8,7 @@ import java.awt.event.MouseListener;
 import java.io.IOException;
 import javax.swing.JComponent;
 
-class Cell extends JComponent implements MouseListener {
+public class Cell extends JComponent implements MouseListener {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -19,6 +19,7 @@ class Cell extends JComponent implements MouseListener {
 	private boolean hasMine;
 	private boolean hasFlag;
 	private boolean covered;
+	private boolean isEmpty;
 	private int x = 0;
 	private int y = 0;
 	private int numMines;
@@ -79,13 +80,16 @@ class Cell extends JComponent implements MouseListener {
 		return img;
 	}
 	
+	public boolean hasMine() {
+		return hasMine;
+	}
+	
 	public void setMine() {
 		hasMine = true;
 	}
 	
 	public void paintComponent(Graphics g)
-    {
-		
+    {		
         super.paintComponent(g);
         g.drawImage(getImage(), 0, 0, null);
     }
@@ -96,44 +100,48 @@ class Cell extends JComponent implements MouseListener {
 		int button = e.getButton();
 		if (allowClick == true) {
 			
-		if (button == MouseEvent.BUTTON3) {
-			hasFlag = !hasFlag;
-			gameEvent.toggleMineFlag(hasFlag);
-		}
-		if (button == MouseEvent.BUTTON1) {
-			
-			if (hasFlag) {
-				//do nothing
-			}
-			else if (hasMine) {
-				gameEvent.hitMine();
-				covered = false;
-				for (int x = 0; x < Board.width; x++) {
-					for (int y = 0; y < Board.height; y++) {
-						Board.cells[x][y].allowClick();
-						if (Board.cells[x][y].checkIfMine()) {
-							Board.cells[x][y].uncover();
-						}
-					}
+			if (button == MouseEvent.BUTTON3) {
+				boolean allowed = true;
+				if (Board.flagNum == 0 && !hasFlag) {
+					allowed = false;
 				}
-				
-			} 
-			else if (covered) {
-				covered = !covered;
-				numMines = gameEvent.uncoverCell(this);
+				if (allowed) {
+					hasFlag = !hasFlag;
+					gameEvent.toggleMineFlag(hasFlag);
+				}
 			}
+			if (button == MouseEvent.BUTTON1) {
+				
+				if (hasFlag) {
+					//do nothing
+				}
+				else if (hasMine) {
+					gameEvent.hitMine();
+					covered = false;
+					for (int x = 0; x < Board.width; x++) {
+						for (int y = 0; y < Board.height; y++) {
+							Board.cells[x][y].allowClick();
+							if (Board.cells[x][y].checkIfMine()) {
+								Board.cells[x][y].uncover();
+							}
+						}
+					}	
+				} else if (covered) {
+					covered = !covered;
+					numMines = gameEvent.uncoverCell(this);
+				}
+			}
+
 		}
-		 
 		repaint();
 	}
-}
 
 	private void allowClick() {
 		// TODO Auto-generated method stub
 		allowClick = false;
 	}
 
-	private void uncover() {
+	public void uncover() {
 		// TODO Auto-generated method stub
 		covered = false;
 		repaint();
@@ -176,5 +184,14 @@ class Cell extends JComponent implements MouseListener {
 	public int inputY() {
 		// TODO Auto-generated method stub
 		return y;
+	}
+
+	public void uncoverCell() {
+		// TODO Auto-generated method stub
+		if (covered) {
+			this.uncover();
+			numMines = gameEvent.uncoverCell(this);
+			repaint();
+		}
 	}
 }

@@ -1,7 +1,7 @@
 package Minesweeper;
 
 import java.awt.Image;
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -32,16 +32,15 @@ public class CellPic {
 	
 	public CellPic() throws IOException {
 		
-		cover = ImageIO.read(new File("Images/cover.png"));
-		flag = ImageIO.read(new File("Images/flag.png"));
-		empty = ImageIO.read(new File("Images/empty.png"));
-		one = ImageIO.read(new File("Images/one.png"));
-		two = ImageIO.read(new File("Images/two.png"));
-		three = ImageIO.read(new File("Images/three.png"));
-		four = ImageIO.read(new File("Images/four.png"));
-		five = ImageIO.read(new File("Images/five.png"));
-		mine = ImageIO.read(new File("Images/mine.png"));
-		
+		this.cover = ImageIO.read(new FileInputStream("Images/cover.png"));
+		this.flag = ImageIO.read(new FileInputStream("Images/flag.png"));
+		this.empty = ImageIO.read(new FileInputStream("Images/empty.png"));
+		this.one = ImageIO.read(new FileInputStream("Images/one.png"));
+		this.two = ImageIO.read(new FileInputStream("Images/two.png"));
+		this.three = ImageIO.read(new FileInputStream("Images/three.png"));
+		this.four = ImageIO.read(new FileInputStream("Images/four.png"));
+		this.five = ImageIO.read(new FileInputStream("Images/five.png"));
+		this.mine = ImageIO.read(new FileInputStream("Images/mine.png"));
 	}
 	
 	public Image getImage(ImgType imgType) {

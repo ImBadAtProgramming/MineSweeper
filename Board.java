@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-import javax.swing.AbstractButton;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -18,13 +17,14 @@ import javax.swing.JPanel;
 
 	public class Board implements GameEvent, ActionListener {
 
-		static final int height = 16;
-		static final int width = 16;
+		static final int height = 4;
+		static final int width = 4;
 		private JLabel flagNumLabel;
 		//number of mines on the board
-		private int mineSupply = 45;
+		//private static int mineSupply = (int)(width * height * .2);
+		private static int mineSupply = 16;
 		//number of flags left to place
-		private int flagNum = mineSupply;
+		public static int flagNum = mineSupply;
 		private JLabel informativeLabel;
 		private JFrame frame;
 		
@@ -69,10 +69,10 @@ import javax.swing.JPanel;
 			c.gridy = 0;
 	
 			
-			for (int y = 0; y < 16; y++) {
+			for (int y = 0; y < height; y++) {
 				c.gridy++;
 
-				for (int x = 0; x < 16; x++) {
+				for (int x = 0; x < width; x++) {
 					c.gridx = x;
 					
 					cells[x][y] = new Cell(x, y, cellPic, this);
@@ -82,11 +82,15 @@ import javax.swing.JPanel;
 			
 			
 			
-			for (int h = 0; h < mineSupply; h++) {
+			for (int h = 0; h < mineSupply;) {
 				
-				int x = (int) (16 * Math.random());
-				int y = (int) (16 * Math.random());
-				cells[x][y].setMine();
+				int x = (int) (width * Math.random());
+				int y = (int) (height * Math.random());
+				
+				if (!cells[x][y].hasMine()) {
+					cells[x][y].setMine();
+					h++;
+				}
 				
 			}
 			
@@ -102,6 +106,7 @@ import javax.swing.JPanel;
 			// TODO Auto-generated method stub
 			System.out.println("GameOver");
 			informativeLabel.setText("Game Over!");
+			frame.repaint();
 		}
 
 		@Override
@@ -112,7 +117,7 @@ import javax.swing.JPanel;
 				if (action.equals("New Game")) {
 					System.out.println("New Game Initiated");
 					try {
-						//frame.dispose();
+						frame.dispose();
 						createFrame();
 						
 						informativeLabel.setText("New Game Initiated");
@@ -141,18 +146,42 @@ import javax.swing.JPanel;
 			int baseX = cell.inputX();
 			int baseY = cell.inputY();
 			int numMines = 0;
-			
+			// checks number of mines around the cell to tell it what number to be
 			for (int j = -1; j < 2; j++) {
 				int x = baseX + j;
 				for (int h = -1; h < 2; h++) {
 					int y = baseY + h;
 					if (0 <= x && x < width && 0 <= y && y < height) {
 						if (cells[x][y].checkIfMine()) {
-						numMines = numMines + 1;
+							numMines = numMines + 1;
 						}
 					}
 				}
+			}	
+			if (numMines == 0) {
+				int x = baseX;
+				int y = baseY;
+
+				x = baseX + 1;
+				if (0 <= x && x < width && 0 <= y && y < height) {
+					cells[x][y].uncoverCell();
+				}
+				x = baseX - 1;
+				if (0 <= x && x < width && 0 <= y && y < height) {
+					cells[x][y].uncoverCell();
+				}
+				x = baseX;
+				y = baseY + 1;
+				if (0 <= x && x < width && 0 <= y && y < height) {
+					cells[x][y].uncoverCell();
+				}
+				y = baseY - 1;
+				if (0 <= x && x < width && 0 <= y && y < height) {
+					cells[x][y].uncoverCell();
+				}
 			}
+			frame.repaint();
 			return numMines;
 		}
 	}
+	
