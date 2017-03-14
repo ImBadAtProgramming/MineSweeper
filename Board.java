@@ -22,11 +22,11 @@ import javax.swing.JPanel;
 		private JLabel flagNumLabel;
 		//number of mines on the board
 		//private static int mineSupply = (int)(width * height * .2);
-		private static int mineSupply = 16;
+		private static int mineSupply = 1;
 		//number of flags left to place
 		public static int flagNum = mineSupply;
-		private JLabel informativeLabel;
-		private JFrame frame;
+		public static JLabel informativeLabel;
+		static JFrame frame;
 		
 		static Cell cells[][] = new Cell[width][height];
 
@@ -100,6 +100,30 @@ import javax.swing.JPanel;
 			frame.setVisible(true);
 			
 		}
+		
+		public void testIfWon() {
+			
+			int cell = 0;
+			
+			for (int x = 0; x < width; x++) {
+				
+				for (int y = 0; y < height; y++) {
+					
+					if (cells[x][y].hasFlag() && cells[x][y].hasMine() ||
+							!cells[x][y].hasMine() && cells[x][y].isCovered()) {
+						
+						cell = cell + 1;
+						
+						if (cell == width * height) {
+							
+							System.out.println("Game Won!");
+							informativeLabel.setText("Game Won!");
+							frame.repaint();
+						}
+					}
+				}
+			}
+		}
 
 		@Override
 		public void hitMine() {
@@ -117,6 +141,7 @@ import javax.swing.JPanel;
 				if (action.equals("New Game")) {
 					System.out.println("New Game Initiated");
 					try {
+						flagNum = mineSupply;
 						frame.dispose();
 						createFrame();
 						

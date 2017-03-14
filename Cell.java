@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+
 import javax.swing.JComponent;
 
 public class Cell extends JComponent implements MouseListener {
@@ -79,6 +80,14 @@ public class Cell extends JComponent implements MouseListener {
 		}
 		return img;
 	}
+
+	public boolean isCovered() {
+		return !covered;
+	}
+	
+	public boolean hasFlag() {
+		return hasFlag;
+	}
 	
 	public boolean hasMine() {
 		return hasMine;
@@ -93,7 +102,7 @@ public class Cell extends JComponent implements MouseListener {
         super.paintComponent(g);
         g.drawImage(getImage(), 0, 0, null);
     }
-
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
@@ -101,6 +110,7 @@ public class Cell extends JComponent implements MouseListener {
 		if (allowClick == true) {
 			
 			if (button == MouseEvent.BUTTON3) {
+				
 				boolean allowed = true;
 				if (Board.flagNum == 0 && !hasFlag) {
 					allowed = false;
@@ -134,6 +144,7 @@ public class Cell extends JComponent implements MouseListener {
 
 		}
 		repaint();
+		gameEvent.testIfWon();
 	}
 
 	private void allowClick() {
