@@ -17,12 +17,12 @@ import javax.swing.JPanel;
 
 	public class Board implements GameEvent, ActionListener {
 
-		static final int height = 4;
-		static final int width = 4;
+		static final int height = 16;
+		static final int width = 16;
 		private JLabel flagNumLabel;
 		//number of mines on the board
-		//private static int mineSupply = (int)(width * height * .2);
-		private static int mineSupply = 1;
+		private static int mineSupply = (int)(width * height * .2);
+		//private static int mineSupply = 1;
 		//number of flags left to place
 		public static int flagNum = mineSupply;
 		public static JLabel informativeLabel;
@@ -204,6 +204,28 @@ import javax.swing.JPanel;
 				if (0 <= x && x < width && 0 <= y && y < height) {
 					cells[x][y].uncoverCell();
 				}
+				
+				x = baseX - 1;
+				y = baseY - 1;
+				if (0 <= x && x < width && 0 <= y && y < height) {
+					cells[x][y].uncoverCell();
+				}
+				x = baseX + 1;
+				y = baseY - 1;
+				if (0 <= x && x < width && 0 <= y && y < height) {
+					cells[x][y].uncoverCell();
+				}
+				x = baseX - 1;
+				y = baseY + 1;
+				if (0 <= x && x < width && 0 <= y && y < height) {
+					cells[x][y].uncoverCell();
+				}
+				x = baseX + 1;
+				y = baseY + 1;
+				if (0 <= x && x < width && 0 <= y && y < height) {
+					cells[x][y].uncoverCell();
+				}
+				
 			}
 			frame.repaint();
 			return numMines;

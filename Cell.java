@@ -21,6 +21,7 @@ public class Cell extends JComponent implements MouseListener {
 	private boolean hasFlag;
 	private boolean covered;
 	private boolean isEmpty;
+	private boolean wrongFlag;
 	private int x = 0;
 	private int y = 0;
 	private int numMines;
@@ -35,6 +36,7 @@ public class Cell extends JComponent implements MouseListener {
 		this.setPreferredSize(new Dimension(width, height));
 		allowClick = true;
 		this.hasMine = false;
+		//this.wrongFlag = false;
 		this.cellPic = cellPic;		
 		this.gameEvent = gameEvent;
 		hasFlag = false;
@@ -50,12 +52,14 @@ public class Cell extends JComponent implements MouseListener {
 		if (covered) {
 			img = cellPic.getImage(CellPic.ImgType.COVER);
 			
-			if (hasFlag == true) {
+			if (hasFlag) {
 				img = cellPic.getImage(CellPic.ImgType.FLAG);
 			}
 		} else {
-			
-			if (hasMine == true) {
+			if (wrongFlag) {
+				img = cellPic.getImage(CellPic.ImgType.WFLAG);
+			}
+			if (hasMine) {
 				img = cellPic.getImage(CellPic.ImgType.MINE);
 				return img;
 			}
@@ -79,6 +83,10 @@ public class Cell extends JComponent implements MouseListener {
 			}
 		}
 		return img;
+	}
+	
+	public void wrongFlag() {
+		wrongFlag = true;
 	}
 
 	public boolean isCovered() {
@@ -108,6 +116,8 @@ public class Cell extends JComponent implements MouseListener {
 		// TODO Auto-generated method stub
 		int button = e.getButton();
 		if (allowClick == true) {
+			
+			Board.informativeLabel.setText("");
 			
 			if (button == MouseEvent.BUTTON3) {
 				

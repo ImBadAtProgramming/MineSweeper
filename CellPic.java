@@ -17,6 +17,7 @@ public class CellPic {
 	private Image four;
 	private Image five;
 	private Image mine;
+	private Image Wflag;
 	
 	enum ImgType {
 		COVER,
@@ -27,7 +28,8 @@ public class CellPic {
 		THREE,
 		FOUR,
 		FIVE,
-		MINE
+		MINE,
+		WFLAG
 	}
 	
 	public CellPic() throws IOException {
@@ -41,6 +43,7 @@ public class CellPic {
 		this.four = ImageIO.read(new FileInputStream("Images/four.png"));
 		this.five = ImageIO.read(new FileInputStream("Images/five.png"));
 		this.mine = ImageIO.read(new FileInputStream("Images/mine.png"));
+		this.Wflag = ImageIO.read(new FileInputStream("Images/Wflag.png"));
 	}
 	
 	public Image getImage(ImgType imgType) {
@@ -63,6 +66,8 @@ public class CellPic {
 			return three;
 		case TWO:
 			return two;
+		case WFLAG:
+			return Wflag;
 		}
 		return null;
 	}
