@@ -58,6 +58,7 @@ public class Cell extends JComponent implements MouseListener {
 		} else {
 			if (wrongFlag) {
 				img = cellPic.getImage(CellPic.ImgType.WFLAG);
+				return img;
 			}
 			if (hasMine) {
 				img = cellPic.getImage(CellPic.ImgType.MINE);

@@ -17,28 +17,54 @@ import javax.swing.JPanel;
 
 	public class Board implements GameEvent, ActionListener {
 
-		static final int height = 16;
-		static final int width = 16;
+		public static int height = 10;
+		public static int width = 10;
+		public static int difficulty = 1;
+		public static int size = 1;
 		private JLabel flagNumLabel;
 		//number of mines on the board
-		private static int mineSupply = (int)(width * height * .2);
-		//private static int mineSupply = 1;
+		private static int mineSupply = (int)(width * height * .15);
 		//number of flags left to place
-		public static int flagNum = mineSupply;
+		public static int flagNum;
 		public static JLabel informativeLabel;
+		public static JButton changeDifficulty;
+		public static JButton changeSize;
 		static JFrame frame;
 		
-		static Cell cells[][] = new Cell[width][height];
+		static Cell cells[][];
 
 		public void createFrame() throws IOException {
 			// TODO Auto-generated method stub
+			if (size == 1) {
+				height = 10;
+				width = 10;					
+			}
+			if (size == 2) {
+				height = 16;
+				width = 16;					
+			}
+			if (size == 3) {
+				height = 20;
+				width = 20;					
+			}
+			
+			if (difficulty == 1) {
+				mineSupply = (int)(width * height * .15);
+			}
+			if (difficulty == 2) {
+				mineSupply = (int)(width * height * .2);
+			}
+			if (difficulty == 3) {
+				mineSupply = (int)(width * height * .25);
+			}
+			flagNum = mineSupply;
 			
 			JPanel mainPanel = new JPanel();
 			mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
 			
 			JPanel topPanel = new JPanel();
 			topPanel.setLayout(new FlowLayout());
-			mainPanel.add(topPanel);
+			topPanel.setBackground(Color.ORANGE);
 			
 			informativeLabel = new JLabel();
 			topPanel.add(informativeLabel);
@@ -56,11 +82,20 @@ import javax.swing.JPanel;
 			
 			JPanel mineField = new JPanel(new GridBagLayout());
 	        mineField.setBackground(Color.black);
-			mainPanel.add(mineField);
+			
+			JPanel bottomPanel = new JPanel(new FlowLayout());
+			
+			changeDifficulty = new JButton("Difficulty");
+			bottomPanel.add(changeDifficulty);
+			changeDifficulty.addActionListener(this);
+			
+			changeSize = new JButton("Size");
+			bottomPanel.add(changeSize);
+			changeSize.addActionListener(this);
 
 			frame = new JFrame("cellTester");
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+			
 			GridBagConstraints c = new GridBagConstraints();
 			c.insets = new Insets(1,1,1,1);
 			
@@ -68,7 +103,7 @@ import javax.swing.JPanel;
 			c.gridx = 0;
 			c.gridy = 0;
 	
-			
+			cells = new Cell[width][height];
 			for (int y = 0; y < height; y++) {
 				c.gridy++;
 
@@ -79,8 +114,6 @@ import javax.swing.JPanel;
 					mineField.add(cells[x][y], c);
 				}
 			}
-			
-			
 			
 			for (int h = 0; h < mineSupply;) {
 				
@@ -93,11 +126,15 @@ import javax.swing.JPanel;
 				}
 				
 			}
-			
+			mainPanel.add(topPanel);
+			mainPanel.add(mineField);
+			mainPanel.add(bottomPanel);
+
 			frame.add(mainPanel);
 			frame.pack();
 		    frame.setLocationRelativeTo(null);
 			frame.setVisible(true);
+			
 			
 		}
 		
@@ -130,6 +167,16 @@ import javax.swing.JPanel;
 			// TODO Auto-generated method stub
 			System.out.println("GameOver");
 			informativeLabel.setText("Game Over!");
+			for (int x = 0; x < width; x++) {
+				
+				for (int y = 0; y < height; y++) {
+					
+					if (!cells[x][y].hasMine() && cells[x][y].hasFlag()) {
+						cells[x][y].wrongFlag();
+					}
+				}
+					
+			}
 			frame.repaint();
 		}
 
@@ -138,20 +185,71 @@ import javax.swing.JPanel;
 			// TODO Auto-generated method stub
 			String action = e.getActionCommand();
 			
-				if (action.equals("New Game")) {
-					System.out.println("New Game Initiated");
-					try {
-						flagNum = mineSupply;
-						frame.dispose();
-						createFrame();
-						
-						informativeLabel.setText("New Game Initiated");
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-		}        
-	}
+			if (action.equals("Difficulty")) {
+				difficulty = difficulty + 1;
+				if (difficulty > 3) {
+					difficulty = 1;
+				}
+				frame.dispose();
+				try {
+					createFrame();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				if (difficulty == 1) {
+					System.out.println("Difficulty changed to Easy");
+					informativeLabel.setText("Difficulty: Easy");
+				}
+				if (difficulty == 2) {
+					System.out.println("Difficulty changed to Medium");
+					informativeLabel.setText("Difficulty: Medium");
+				}
+				if (difficulty == 3) {
+					System.out.println("Difficulty changed to Hard");
+					informativeLabel.setText("Difficulty: Hard");
+				}
+			}
+			
+			if(action.equals("Size")) {
+				size = size + 1;
+				if (size > 3) {
+					size = 1;
+				}
+				frame.dispose();
+				try {
+					createFrame();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				if (size == 1) {
+					System.out.println("Size changed to Small");
+					informativeLabel.setText("Size: Small");
+				}
+				if (size == 2) {
+					System.out.println("Size changed to Medium");
+					informativeLabel.setText("Size: Medium");				
+				}
+				if (size == 3) {
+					System.out.println("Size changed to Large");
+					informativeLabel.setText("Size: Large");				
+				}
+			}
+			if (action.equals("New Game")) {
+				System.out.println("New Game Initiated");
+				try {
+					flagNum = mineSupply;
+					frame.dispose();
+					createFrame();
+					
+					informativeLabel.setText("New Game Initiated");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}        
+		}
 
 		@Override
 		public void toggleMineFlag(boolean addingFlag) {
