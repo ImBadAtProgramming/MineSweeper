@@ -29,6 +29,9 @@ import javax.swing.JPanel;
 		public static JLabel informativeLabel;
 		public static JButton changeDifficulty;
 		public static JButton changeSize;
+		public static String informativeText;
+		public static String diffText = "Easy";
+		public static String sizeText = "Small";
 		static JFrame frame;
 		
 		static Cell cells[][];
@@ -49,13 +52,13 @@ import javax.swing.JPanel;
 			}
 			
 			if (difficulty == 1) {
-				mineSupply = (int)(width * height * .15);
+				mineSupply = (int)(width * height * .12);
 			}
 			if (difficulty == 2) {
-				mineSupply = (int)(width * height * .2);
+				mineSupply = (int)(width * height * .145);
 			}
 			if (difficulty == 3) {
-				mineSupply = (int)(width * height * .25);
+				mineSupply = (int)(width * height * .2);
 			}
 			flagNum = mineSupply;
 			
@@ -64,10 +67,11 @@ import javax.swing.JPanel;
 			
 			JPanel topPanel = new JPanel();
 			topPanel.setLayout(new FlowLayout());
-			topPanel.setBackground(Color.ORANGE);
+			topPanel.setBackground(Color.GRAY);
 			
-			informativeLabel = new JLabel();
+			informativeLabel = new JLabel(informativeText);
 			topPanel.add(informativeLabel);
+			informativeLabel.setForeground(Color.BLACK);
 			
 			JButton newGame = new JButton("New Game");
 			topPanel.add(newGame);
@@ -75,24 +79,35 @@ import javax.swing.JPanel;
 			
 			JLabel flag = new JLabel("Flags");
 			topPanel.add(flag);
+			flag.setForeground(Color.BLACK);
 			
 			flagNumLabel = new JLabel();
 			topPanel.add(flagNumLabel);
 			flagNumLabel.setText(Integer.toString(flagNum));
+			flagNumLabel.setForeground(Color.BLACK);
 			
 			JPanel mineField = new JPanel(new GridBagLayout());
 	        mineField.setBackground(Color.black);
 			
 			JPanel bottomPanel = new JPanel(new FlowLayout());
+			bottomPanel.setBackground(Color.GRAY);
 			
 			changeDifficulty = new JButton("Difficulty");
 			bottomPanel.add(changeDifficulty);
 			changeDifficulty.addActionListener(this);
 			
+			JLabel difficulty = new JLabel(diffText);
+			difficulty.setForeground(Color.BLACK);
+			bottomPanel.add(difficulty);
+			
 			changeSize = new JButton("Size");
 			bottomPanel.add(changeSize);
 			changeSize.addActionListener(this);
 
+			JLabel size = new JLabel(sizeText);
+			size.setForeground(Color.BLACK);
+			bottomPanel.add(size);
+			
 			frame = new JFrame("cellTester");
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			
@@ -154,7 +169,7 @@ import javax.swing.JPanel;
 						if (cell == width * height) {
 							
 							System.out.println("Game Won!");
-							informativeLabel.setText("Game Won!");
+							informativeText = "Game Won!";
 							frame.repaint();
 						}
 					}
@@ -166,7 +181,7 @@ import javax.swing.JPanel;
 		public void hitMine() {
 			// TODO Auto-generated method stub
 			System.out.println("GameOver");
-			informativeLabel.setText("Game Over!");
+			informativeText = "Game Over!";
 			for (int x = 0; x < width; x++) {
 				
 				for (int y = 0; y < height; y++) {
@@ -190,24 +205,24 @@ import javax.swing.JPanel;
 				if (difficulty > 3) {
 					difficulty = 1;
 				}
+				if (difficulty == 1) {
+					System.out.println("Difficulty changed to Easy");
+					diffText = "Easy";
+				}
+				if (difficulty == 2) {
+					System.out.println("Difficulty changed to Medium");
+					diffText = "Medium";
+				}
+				if (difficulty == 3) {
+					System.out.println("Difficulty changed to Hard");
+					diffText = "Hard";
+				}
 				frame.dispose();
 				try {
 					createFrame();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}
-				if (difficulty == 1) {
-					System.out.println("Difficulty changed to Easy");
-					informativeLabel.setText("Difficulty: Easy");
-				}
-				if (difficulty == 2) {
-					System.out.println("Difficulty changed to Medium");
-					informativeLabel.setText("Difficulty: Medium");
-				}
-				if (difficulty == 3) {
-					System.out.println("Difficulty changed to Hard");
-					informativeLabel.setText("Difficulty: Hard");
 				}
 			}
 			
@@ -216,6 +231,18 @@ import javax.swing.JPanel;
 				if (size > 3) {
 					size = 1;
 				}
+				if (size == 1) {
+					System.out.println("Size changed to Small");
+					sizeText = "Small";
+				}
+				if (size == 2) {
+					System.out.println("Size changed to Medium");
+					sizeText = "Medium";				
+				}
+				if (size == 3) {
+					System.out.println("Size changed to Large");
+					sizeText = "Large";				
+				}
 				frame.dispose();
 				try {
 					createFrame();
@@ -223,32 +250,19 @@ import javax.swing.JPanel;
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				if (size == 1) {
-					System.out.println("Size changed to Small");
-					informativeLabel.setText("Size: Small");
-				}
-				if (size == 2) {
-					System.out.println("Size changed to Medium");
-					informativeLabel.setText("Size: Medium");				
-				}
-				if (size == 3) {
-					System.out.println("Size changed to Large");
-					informativeLabel.setText("Size: Large");				
-				}
 			}
 			if (action.equals("New Game")) {
 				System.out.println("New Game Initiated");
 				try {
 					flagNum = mineSupply;
 					frame.dispose();
+					informativeText = "New Game Initiated";
 					createFrame();
-					
-					informativeLabel.setText("New Game Initiated");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-			}        
+			}
 		}
 
 		@Override
@@ -280,7 +294,8 @@ import javax.swing.JPanel;
 						}
 					}
 				}
-			}	
+			}
+			// if the cell has no adjacent mines, then all cells around it are checked and uncovered
 			if (numMines == 0) {
 				int x = baseX;
 				int y = baseY;

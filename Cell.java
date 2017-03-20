@@ -28,6 +28,7 @@ public class Cell extends JComponent implements MouseListener {
 	private CellPic cellPic;
 	private GameEvent gameEvent;
 	
+	
 	public Cell(int x, int y, CellPic cellPic, GameEvent gameEvent) throws IOException {
 
 		super();
@@ -44,7 +45,10 @@ public class Cell extends JComponent implements MouseListener {
 		numMines = 0;
 		addMouseListener(this);
 	}
-	
+	/**
+	 * getImage returns the correct image for each cell depending on its properties
+	 * @return Image object
+	 */
 	public Image getImage() {
 		
 		Image img = null;
